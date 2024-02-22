@@ -1,0 +1,57 @@
+{
+  "name": "@gachlab/google-forms-scraper",
+  "version": "0.0.1",
+  "description": "Transform a google form to a JSON representation that can be used to create html forms from google form data",
+  "main": "dist/plugin.cjs.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "unpkg": "dist/plugin.js",
+  "files": [
+    "dist/"
+  ],
+  "author": "Guillermo Carrillo",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gachlab/google-forms-scraper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gachlab/google-forms-scraper/issues"
+  },
+  "keywords": [],
+  "scripts": {
+    "verify": "npm run verify:web",
+    "verify:web": "npm run build",
+    "lint": "npm run eslint && npm run prettier -- --check",
+    "fmt": "npm run eslint -- --fix && npm run prettier -- --write ",
+    "eslint": "eslint . --ext ts",
+    "prettier": "prettier \"**/*.{css,html,ts,js,java}\"",
+    "docgen": "docgen --api GoogleFormsScraper --output-readme README.md --output-json dist/docs.json",
+    "build": "npm run clean && npm run docgen && tsc && rollup -c rollup.config.mjs",
+    "clean": "rimraf ./dist",
+    "watch": "tsc --watch",
+    "prepublishOnly": "npm run build",
+    "test": "tap run ",
+    "watch:test": "tap repl  w "
+  },
+  "dependencies": {
+    "node-html-parser": "^6.1.12"
+  },
+  "devDependencies": {
+    "tap": "^18.7.0",
+    "@capacitor/docgen": "^0.2.2",
+    "@ionic/eslint-config": "^0.3.0",
+    "@ionic/prettier-config": "^4.0.0",
+    "@ionic/swiftlint-config": "^1.1.2",
+    "eslint": "^7.0.0",
+    "prettier": "~3.2.5",
+    "prettier-plugin-java": "~2.6.0",
+    "rimraf": "^5.0.5",
+    "rollup": "^4.12.0",
+    "typescript": "~5.2.2"
+  },
+  "prettier": "@ionic/prettier-config",
+  "eslintConfig": {
+    "extends": "@ionic/eslint-config/recommended"
+  }
+}
