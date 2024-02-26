@@ -1,6 +1,6 @@
 {
   "name": "@gachlab/google-forms-scraper",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Transform a google form to a JSON representation that can be used to create html forms from google form data",
   "main": "dist/index.js",
   "module": "dist/esm/index.js",
