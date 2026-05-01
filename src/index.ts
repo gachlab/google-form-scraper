@@ -1,5 +1,2 @@
-
-import { GoogleFormsScraperReference } from "./reference-implementation"
-
 export * from './definitions';
-export { GoogleFormsScraperReference as GoogleFormsScraper };
+export { GoogleFormsScraperReference as GoogleFormsScraper } from './reference-implementation';

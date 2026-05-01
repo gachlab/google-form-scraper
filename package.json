@@ -1,11 +1,11 @@
 {
   "name": "@gachlab/google-forms-scraper",
-  "version": "0.3.0",
-  "description": "Transform a google form to a JSON representation that can be used to create html forms from google form data",
-  "main": "dist/index.js",
+  "version": "1.0.0",
+  "description": "Parse Google Forms into structured JSON. Extract titles, fields, options, and validation from any public Google Form URL.",
+  "type": "module",
+  "main": "dist/index.cjs.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
-  "unpkg": "dist/index.js",
   "files": [
     "dist/"
   ],
@@ -18,40 +18,32 @@
   "bugs": {
     "url": "https://github.com/gachlab/google-forms-scraper/issues"
   },
-  "keywords": [],
+  "keywords": [
+    "google-forms",
+    "scraper",
+    "parser",
+    "form",
+    "json",
+    "html-parser"
+  ],
   "scripts": {
-    "verify": "npm run verify:web",
-    "verify:web": "npm run build",
-    "lint": "npm run eslint && npm run prettier -- --check",
-    "fmt": "npm run eslint -- --fix && npm run prettier -- --write ",
-    "eslint": "eslint . --ext ts",
-    "prettier": "prettier \"**/*.{css,html,ts,js,java}\"",
-    "docgen": "docgen --api GoogleFormsScraper --output-readme README.md --output-json dist/docs.json",
-    "build": "npm run clean && npm run docgen && tsc && rollup -c rollup.config.mjs",
+    "build": "npm run clean && vite build",
     "clean": "rimraf ./dist",
-    "watch": "tsc --watch",
-    "prepublishOnly": "npm run build",
-    "test": "tap run ",
-    "watch:test": "tap repl  w "
+    "lint": "eslint src/",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "node-html-parser": "^6.1.12"
   },
   "devDependencies": {
-    "tap": "^18.7.0",
-    "@capacitor/docgen": "^0.2.2",
-    "@ionic/eslint-config": "^0.3.0",
-    "@ionic/prettier-config": "^4.0.0",
-    "@ionic/swiftlint-config": "^1.1.2",
-    "eslint": "^7.0.0",
-    "prettier": "~3.2.5",
-    "prettier-plugin-java": "~2.6.0",
-    "rimraf": "^5.0.5",
-    "rollup": "^4.12.0",
-    "typescript": "~5.2.2"
-  },
-  "prettier": "@ionic/prettier-config",
-  "eslintConfig": {
-    "extends": "@ionic/eslint-config/recommended"
+    "@typescript-eslint/eslint-plugin": "^8.59.1",
+    "@typescript-eslint/parser": "^8.59.1",
+    "eslint": "^9.39.2",
+    "rimraf": "^6.1.2",
+    "typescript": "^6.0.0",
+    "vite": "^7.3.1",
+    "vite-plugin-dts": "^4.4.0",
+    "vitest": "^3.2.1"
   }
 }

@@ -1,36 +1,38 @@
-
-export interface getFormTemplate { (input: GoogleFormInput): Promise<FormResponse> }
-
-export interface GoogleFormsScraper {
-  (dependencies?: any): { getFormTemplate: getFormTemplate }
+export interface GoogleFormInput {
+  url: string;
 }
 
+export interface FormFieldOption {
+  prompt: string;
+  isTextField?: boolean;
+}
+
+export interface FormFieldRange {
+  prompt: string;
+}
+
+export interface FormField {
+  name: string;
+  prompt: string;
+  required: boolean;
+  placeholder: string;
+  type: 'radiogroup' | 'presentation' | 'list' | 'textarea' | 'email' | 'text' | 'unknown';
+  options?: FormFieldOption[];
+  min?: FormFieldRange;
+  max?: FormFieldRange;
+}
 
 export interface FormResponse {
-  title: string | undefined
-  description: string | undefined
-  fields: any
+  title: string | undefined;
+  description: string | undefined;
+  fields: FormField[];
 }
 
-// interface Field {
-//   name: "sex",
-//   type: "radio",
-//   value: "",
-//   required: true,
-//   options: [
-//     {
-//       name: "genero",
-//       prompt: "Femenino",
-//       value: "F",
-//     },
-//     {
-//       name: "genero",
-//       prompt: "Masculino",
-//       value: "M",
-//     },
-//   ],
-// }
+export interface GoogleFormsScraper {
+  getFormTemplate(input: GoogleFormInput): Promise<FormResponse>;
+}
 
-export interface ParseError { }
-
-export interface GoogleFormInput { url: string }
+export type GoogleFormsScraperFactory = (dependencies?: {
+  fetch: typeof globalThis.fetch;
+  htmlParser: typeof import('node-html-parser').parse;
+}) => GoogleFormsScraper;
