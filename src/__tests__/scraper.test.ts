@@ -1,4 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, mock } from 'node:test';
+import assert from 'node:assert/strict';
 import { parse } from 'node-html-parser';
 import { GoogleFormsScraper } from '../index';
 
@@ -30,74 +31,73 @@ const MOCK_FORM_HTML = `
 </html>`;
 
 function createMockFetch(html: string, ok = true) {
-  return vi.fn().mockResolvedValue({
+  return mock.fn(async () => ({
     ok,
     status: ok ? 200 : 404,
     text: () => Promise.resolve(html),
-  });
+  }));
 }
 
 describe('GoogleFormsScraper', () => {
   it('parses form title and description', async () => {
     const scraper = GoogleFormsScraper({ fetch: createMockFetch(MOCK_FORM_HTML), htmlParser: parse });
     const result = await scraper.getFormTemplate({ url: 'https://example.com/form' });
-    expect(result.title).toBe('Test Form Title');
-    expect(result.description).toBe('Test description');
+    assert.strictEqual(result.title, 'Test Form Title');
+    assert.strictEqual(result.description, 'Test description');
   });
 
   it('parses text fields', async () => {
     const scraper = GoogleFormsScraper({ fetch: createMockFetch(MOCK_FORM_HTML), htmlParser: parse });
     const result = await scraper.getFormTemplate({ url: 'https://example.com/form' });
     const textField = result.fields.find(f => f.type === 'text');
-    expect(textField).toBeDefined();
-    expect(textField!.prompt).toBe('Your Name');
-    expect(textField!.required).toBe(true);
+    assert.ok(textField !== undefined);
+    assert.strictEqual(textField!.prompt, 'Your Name');
+    assert.strictEqual(textField!.required, true);
   });
 
   it('parses email fields', async () => {
     const scraper = GoogleFormsScraper({ fetch: createMockFetch(MOCK_FORM_HTML), htmlParser: parse });
     const result = await scraper.getFormTemplate({ url: 'https://example.com/form' });
     const emailField = result.fields.find(f => f.type === 'email');
-    expect(emailField).toBeDefined();
-    expect(emailField!.required).toBe(true);
+    assert.ok(emailField !== undefined);
+    assert.strictEqual(emailField!.required, true);
   });
 
   it('parses textarea fields', async () => {
     const scraper = GoogleFormsScraper({ fetch: createMockFetch(MOCK_FORM_HTML), htmlParser: parse });
     const result = await scraper.getFormTemplate({ url: 'https://example.com/form' });
     const textarea = result.fields.find(f => f.type === 'textarea');
-    expect(textarea).toBeDefined();
-    expect(textarea!.prompt).toBe('Comments');
-    expect(textarea!.required).toBe(false);
+    assert.ok(textarea !== undefined);
+    assert.strictEqual(textarea!.prompt, 'Comments');
+    assert.strictEqual(textarea!.required, false);
   });
 
   it('parses radiogroup fields with options', async () => {
     const scraper = GoogleFormsScraper({ fetch: createMockFetch(MOCK_FORM_HTML), htmlParser: parse });
     const result = await scraper.getFormTemplate({ url: 'https://example.com/form' });
     const radio = result.fields.find(f => f.type === 'radiogroup');
-    expect(radio).toBeDefined();
-    expect(radio!.options).toHaveLength(2);
-    expect(radio!.options![0].prompt).toBe('Male');
-    expect(radio!.options![1].prompt).toBe('Female');
+    assert.ok(radio !== undefined);
+    assert.strictEqual(radio!.options!.length, 2);
+    assert.strictEqual(radio!.options![0].prompt, 'Male');
+    assert.strictEqual(radio!.options![1].prompt, 'Female');
   });
 
   it('returns correct number of fields', async () => {
     const scraper = GoogleFormsScraper({ fetch: createMockFetch(MOCK_FORM_HTML), htmlParser: parse });
     const result = await scraper.getFormTemplate({ url: 'https://example.com/form' });
-    expect(result.fields).toHaveLength(4);
+    assert.strictEqual(result.fields.length, 4);
   });
 
   it('throws on failed fetch', async () => {
     const scraper = GoogleFormsScraper({ fetch: createMockFetch('', false), htmlParser: parse });
-    await expect(scraper.getFormTemplate({ url: 'https://example.com/form' }))
-      .rejects.toThrow('Failed to fetch form: 404');
+    await assert.rejects(() => scraper.getFormTemplate({ url: 'https://example.com/form' }), /Failed to fetch form: 404/);
   });
 
   it('handles empty form', async () => {
     const emptyHtml = '<html><body></body></html>';
     const scraper = GoogleFormsScraper({ fetch: createMockFetch(emptyHtml), htmlParser: parse });
     const result = await scraper.getFormTemplate({ url: 'https://example.com/form' });
-    expect(result.fields).toHaveLength(0);
-    expect(result.title).toBeUndefined();
+    assert.strictEqual(result.fields.length, 0);
+    assert.strictEqual(result.title, undefined);
   });
 });
