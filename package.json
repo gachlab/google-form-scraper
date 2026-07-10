@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Parse Google Forms into structured JSON. Extract titles, fields, options, and validation from any public Google Form URL.",
   "type": "module",
-  "main": "dist/index.cjs.js",
+  "main": "./dist/index.cjs",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
   "files": [
@@ -27,23 +27,21 @@
     "html-parser"
   ],
   "scripts": {
-    "build": "npm run clean && vite build",
+    "build": "npm run clean && tsc --emitDeclarationOnly && node build.mjs",
     "clean": "rimraf ./dist",
-    "lint": "eslint src/",
+    "lint": "prettier --check \"src/**/*.ts\"",
     "test": "node --import tsx/esm --test src/__tests__/scraper.test.ts",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "fmt": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
     "node-html-parser": "^6.1.12"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.59.1",
-    "@typescript-eslint/parser": "^8.59.1",
-    "eslint": "^9.39.2",
+    "esbuild": "^0.28.0",
+    "prettier": "^3.8.0",
     "rimraf": "^6.1.2",
     "tsx": "^4.19.2",
-    "typescript": "^6.0.0",
-    "vite": "^7.3.1",
-    "vite-plugin-dts": "^4.4.0"
+    "typescript": "^7.0.2"
   }
 }
