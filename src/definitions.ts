@@ -16,7 +16,14 @@ export interface FormField {
   prompt: string;
   required: boolean;
   placeholder: string;
-  type: 'radiogroup' | 'presentation' | 'list' | 'textarea' | 'email' | 'text' | 'unknown';
+  type:
+    | "radiogroup"
+    | "presentation"
+    | "list"
+    | "textarea"
+    | "email"
+    | "text"
+    | "unknown";
   options?: FormFieldOption[];
   min?: FormFieldRange;
   max?: FormFieldRange;
@@ -34,5 +41,5 @@ export interface GoogleFormsScraper {
 
 export type GoogleFormsScraperFactory = (dependencies?: {
   fetch: typeof globalThis.fetch;
-  htmlParser: typeof import('node-html-parser').parse;
+  htmlParser: typeof import("node-html-parser").parse;
 }) => GoogleFormsScraper;
