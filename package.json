@@ -16,10 +16,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gachlab/google-forms-scraper.git"
+    "url": "git+https://github.com/gachlab/google-form-scraper.git"
   },
   "bugs": {
-    "url": "https://github.com/gachlab/google-forms-scraper/issues"
+    "url": "https://github.com/gachlab/google-form-scraper/issues"
   },
   "keywords": [
     "google-forms",
