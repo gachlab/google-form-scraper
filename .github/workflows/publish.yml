@@ -1,29 +1,50 @@
 name: Publish
 
 on:
-  push:
-    tags:
-      - 'v*'
+  release:
+    types: [published]
 
 jobs:
-  publish:
+  test:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      id-token: write
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
-          registry-url: https://registry.npmjs.org
       - run: npm ci
-      - run: npm test
+      - run: npm run lint
       - run: npm run build
-      - run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - uses: softprops/action-gh-release@v2
+      - run: npm test
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write # required for OIDC trusted publishing
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          generate_release_notes: true
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          cache: npm
+      # Trusted Publishing (OIDC) needs npm >= 11.5.1. node 24 already ships
+      # npm 11.x, so this is a floor, not an upgrade — it keeps the guarantee
+      # explicit if the bundled npm ever moves.
+      #
+      # Pinned to a major on purpose: `npm@latest` next to a pinned node is a
+      # time bomb, and it already went off once in this org. npm 12 shipped
+      # requiring node ^22.22.2 || ^24.15.0 || >=26 and the install started
+      # failing with EBADENGINE. Bump this deliberately, with node-version.
+      - run: npm install -g npm@11
+      - run: npm ci
+      - run: npm run build
+      # No NODE_AUTH_TOKEN: npm detects the GitHub OIDC environment and
+      # authenticates via the configured trusted publisher, which must be set up
+      # at https://www.npmjs.com/package/@gachlab/google-forms-scraper/access
+      # Provenance is attached automatically.
+      - run: npm publish --access public
