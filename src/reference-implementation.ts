@@ -89,6 +89,12 @@ function getForm(dependencies: {
         const listItems = item.querySelectorAll(
           "div[role='list'] div[role='listitem']",
         );
+        // A dropdown's first `role="option"` is a UI placeholder ("Choose"),
+        // localised by the request, and its `data-value` is the empty string.
+        // That empty value is what identifies it; the text cannot be relied on.
+        const dropdownOptions = item
+          .querySelectorAll("div[role='listbox'] div[role='option']")
+          .filter((option) => (option.getAttribute("data-value") ?? "") !== "");
 
         const field: FormField = {
           name: `question-${index}`,
@@ -102,16 +108,22 @@ function getForm(dependencies: {
                 ? "presentation"
                 : item.querySelector("div[role='list']")
                   ? "list"
-                  : item.querySelector("textarea")
-                    ? "textarea"
-                    : item.querySelector("input[type='email']")
-                      ? "email"
-                      : item.querySelector("input[type='text']")
-                        ? "text"
-                        : "unknown",
+                  : item.querySelector("div[role='listbox']")
+                    ? "dropdown"
+                    : item.querySelector("textarea")
+                      ? "textarea"
+                      : item.querySelector("input[type='email']")
+                        ? "email"
+                        : item.querySelector("input[type='text']")
+                          ? "text"
+                          : "unknown",
         };
 
-        if (listItems.length > 0) {
+        if (dropdownOptions.length > 0) {
+          field.options = dropdownOptions.map((option) => ({
+            prompt: option.text,
+          }));
+        } else if (listItems.length > 0) {
           field.options = listItems.map((li) => ({
             prompt: li.querySelector("span[dir='auto']")?.text ?? "",
             ...(li.querySelector("input[type='text']")

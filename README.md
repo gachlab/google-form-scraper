@@ -127,20 +127,24 @@ interface FormFieldOption {
 
 ### Question types
 
-| Google Forms question                        | `type`                                                           | Carries                                   |
-| -------------------------------------------- | ---------------------------------------------------------------- | ----------------------------------------- |
-| Short answer                                 | `text`                                                           |                                           |
-| Paragraph                                    | `textarea`                                                       |                                           |
-| Email                                        | `email`                                                          |                                           |
-| Multiple choice                              | `radiogroup`                                                     | `options`                                 |
-| Checkboxes                                   | `list`                                                           | `options`                                 |
-| Linear scale                                 | `presentation`                                                   | `options`, and `min`/`max` when captioned |
-| Multiple-choice grid                         | `presentation`, one field per row                                | `options`, `min`/`max`                    |
-| **Dropdown**                                 | **`unknown`, with no options** — see [Limitations](#limitations) |                                           |
-| Section header, image, anything unrecognised | `unknown`                                                        |                                           |
+| Google Forms question                        | `type`                            | Carries                                   |
+| -------------------------------------------- | --------------------------------- | ----------------------------------------- |
+| Short answer                                 | `text`                            |                                           |
+| Paragraph                                    | `textarea`                        |                                           |
+| Email                                        | `email`                           |                                           |
+| Multiple choice                              | `radiogroup`                      | `options`                                 |
+| Checkboxes                                   | `list`                            | `options`                                 |
+| Linear scale                                 | `presentation`                    | `options`, and `min`/`max` when captioned |
+| Multiple-choice grid                         | `presentation`, one field per row | `options`, `min`/`max`                    |
+| Dropdown                                     | `dropdown`                        | `options`                                 |
+| Section header, image, anything unrecognised | `unknown`                         |                                           |
 
 `presentation` is the linear scale. The name is a historical accident kept for
 compatibility with existing consumers.
+
+A dropdown's `options` exclude the "Choose" entry Google renders at the top of the
+list. That entry is a UI placeholder, not an answer, and it is identified by its
+empty `data-value` rather than by its text — the text is localised by the request.
 
 `min` and `max` are the captions either side of a scale ("Extremely Good" /
 "Extremely Poor"). Both are optional in Google Forms, and when the author leaves
@@ -179,10 +183,6 @@ of leaking it.
 
 ## Limitations
 
-- **Dropdown questions are not parsed.** Google renders them as `role="listbox"`
-  with `role="option"` children, which no branch matches, so they arrive as
-  `type: 'unknown'` with their options dropped. A consumer rendering the result
-  gets a question nobody can answer. Multiple choice and checkboxes are fine.
 - It parses the HTML Google renders, so a change to that markup can change the
   output. The test fixtures are captured verbatim from live forms rather than
   written by hand, which is what keeps that honest.

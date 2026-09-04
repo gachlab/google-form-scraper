@@ -53,6 +53,7 @@ export interface FormField {
     | "radiogroup"
     | "presentation"
     | "list"
+    | "dropdown"
     | "textarea"
     | "email"
     | "text"
