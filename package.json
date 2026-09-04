@@ -1,6 +1,6 @@
 {
   "name": "@gachlab/google-forms-scraper",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Parse Google Forms into structured JSON. Extract titles, fields, options, and validation from any public Google Form URL.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -11,6 +11,9 @@
   ],
   "author": "Guillermo Carrillo",
   "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gachlab/google-forms-scraper.git"
@@ -30,7 +33,7 @@
     "build": "npm run clean && tsc --emitDeclarationOnly && node build.mjs",
     "clean": "rimraf ./dist",
     "lint": "prettier --check \"src/**/*.ts\"",
-    "test": "node --import tsx/esm --test src/__tests__/scraper.test.ts",
+    "test": "node --import tsx/esm --test \"src/__tests__/**/*.test.ts\"",
     "prepublishOnly": "npm run build",
     "fmt": "prettier --write \"src/**/*.ts\""
   },

@@ -32,10 +32,17 @@ Factory function that returns a scraper instance. Optionally accepts custom `fet
 ### `scraper.getFormTemplate(input)`
 
 ```typescript
-getFormTemplate(input: { url: string }) => Promise<FormResponse>
+getFormTemplate(input: { url: string; timeoutMs?: number }) => Promise<FormResponse>
 ```
 
-Fetches and parses a Google Form. Returns:
+Fetches and parses a Google Form.
+
+`timeoutMs` bounds the whole exchange -- connecting, headers and body -- and defaults
+to `DEFAULT_TIMEOUT_MS` (10 000). It must be a positive, finite number; anything else
+is refused with a `RangeError`. Fractional values are floored and anything past
+`MAX_TIMEOUT_MS` is capped, so a computed remaining budget can be passed as-is.
+
+Returns:
 
 ```typescript
 interface FormResponse {
@@ -51,10 +58,23 @@ interface FormField {
   placeholder: string;   // Placeholder text if any
   type: 'radiogroup' | 'presentation' | 'list' | 'textarea' | 'email' | 'text' | 'unknown';
   options?: FormFieldOption[];  // For radio/list fields
-  min?: { prompt: string };     // For scale fields
-  max?: { prompt: string };     // For scale fields
+  min?: { prompt: string };     // Scale endpoint caption, when the form has one
+  max?: { prompt: string };     // Scale endpoint caption, when the form has one
 }
 ```
+
+### Failures
+
+`getFormTemplate` rejects with a typed error, so callers do not have to match on
+message text:
+
+| Error | When |
+| --- | --- |
+| `FormFetchError` | Google answered but refused the form. `status` carries the code -- `401` when the form requires signing in, `404` when the link is an `/edit` URL or the form is gone. |
+| `FormTimeoutError` | The exchange outlived `timeoutMs`. `timeoutMs` carries the budget that expired. |
+| `RangeError` | `timeoutMs` was not a positive, finite number. |
+
+Anything the transport itself throws (DNS failure, TLS error) propagates unchanged.
 
 ## Custom Dependencies
 
@@ -68,3 +88,7 @@ const scraper = GoogleFormsScraper({
   htmlParser: parse,
 });
 ```
+
+The deadline is enforced by the scraper, not delegated to the transport, so a custom
+`fetch` that ignores the `signal` it is handed is still bounded. An abort is signalled
+as well, so a transport that honours it releases the socket instead of leaking it.
