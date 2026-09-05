@@ -154,11 +154,15 @@ function getForm(dependencies: {
             node && !options.has(node) && node.text.trim().length > 0
               ? node.text
               : undefined;
-          const min = caption(first);
-          const max = caption(last);
-          if (min !== undefined && max !== undefined && first !== last) {
-            field.min = { prompt: min };
-            field.max = { prompt: max };
+          // Each caption is emitted on its own. The two are independent fields in
+          // Google Forms and an author can fill in only one; dropping the one that was
+          // written because its partner is missing throws away real copy. `first` and
+          // `last` being the same node still means there are no captions at all.
+          if (first !== last) {
+            const min = caption(first);
+            const max = caption(last);
+            if (min !== undefined) field.min = { prompt: min };
+            if (max !== undefined) field.max = { prompt: max };
           }
         }
 

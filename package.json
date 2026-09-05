@@ -1,6 +1,6 @@
 {
   "name": "@gachlab/google-forms-scraper",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Parse Google Forms into structured JSON. Extract titles, fields, options, and validation from any public Google Form URL.",
   "type": "module",
   "main": "./dist/index.cjs",

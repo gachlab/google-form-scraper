@@ -6,6 +6,8 @@ import {
   LINEAR_SCALE_ITEM,
   LINEAR_SCALE_WITHOUT_CAPTIONS_ITEM,
   LINEAR_SCALE_WITH_BLANK_CAPTIONS_ITEM,
+  LINEAR_SCALE_LOW_CAPTION_ONLY_ITEM,
+  LINEAR_SCALE_HIGH_CAPTION_ONLY_ITEM,
   LIST_ITEM,
   MULTIPLE_CHOICE_ITEM,
   formPage,
@@ -106,5 +108,17 @@ describe("GoogleFormsScraper against real Google Forms markup", () => {
     );
     assert.strictEqual(result.fields[0].min, undefined);
     assert.strictEqual(result.fields[0].max, undefined);
+  });
+
+  it("keeps the one caption a scale has when the other is missing", async () => {
+    // Both captions are independent in Google Forms. Dropping the one the author did
+    // write, because its partner is absent, throws away real copy.
+    const low = await scrape(formPage(LINEAR_SCALE_LOW_CAPTION_ONLY_ITEM));
+    assert.deepStrictEqual(low.fields[0].min, { prompt: "Extremely Good" });
+    assert.strictEqual(low.fields[0].max, undefined);
+
+    const high = await scrape(formPage(LINEAR_SCALE_HIGH_CAPTION_ONLY_ITEM));
+    assert.strictEqual(high.fields[0].min, undefined);
+    assert.deepStrictEqual(high.fields[0].max, { prompt: "Extremely Poor" });
   });
 });

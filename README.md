@@ -147,9 +147,10 @@ list. That entry is a UI placeholder, not an answer, and it is identified by its
 empty `data-value` rather than by its text — the text is localised by the request.
 
 `min` and `max` are the captions either side of a scale ("Extremely Good" /
-"Extremely Poor"). Both are optional in Google Forms, and when the author leaves
-them out the fields are **absent** rather than filled with the first and last
-option — a range the form never showed is worse than no range at all.
+"Extremely Poor"). Both are optional in Google Forms, and independent of each
+other: a scale with only a low caption reports `min` and no `max`. When a caption
+is absent the field is **absent** rather than filled with the first or last option
+— a range the form never showed is worse than no range at all.
 
 ### Failures
 
